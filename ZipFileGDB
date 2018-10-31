@@ -1,0 +1,39 @@
+# Name: ZipFileGDB.py
+# Description: Compresses a directory of ESRI file geodatabases into zip files
+# Version: 20171110
+# Author: Chris Robinson
+
+import os
+import zipfile
+import glob
+
+
+gdbDir = r"C:/Projects/junk/ZipTest/"
+zipDir = r"C:/Projects/junk/ZipTest/ZipFiles2/"
+
+
+for filename in os.listdir(gdbDir):
+    if filename.endswith('.gdb'):
+        
+        #Create name for new zip file
+        GDB = gdbDir + filename
+        zipFileName = zipDir + filename.replace('.gdb', ".zip")
+
+        #Print Message
+        print "Creating " + zipFileName
+        
+        #Create Directory if it does not exist
+        if not os.path.exists(zipDir):
+            os.makedirs(zipDir)
+            
+        #Create new Zip file
+        zip = zipfile.ZipFile(zipFileName, 'w')
+        
+        #Loop through files within the GDB and add them to Zip file
+        for infile in glob.glob(GDB+"/*"):
+            #(filename, archive name, compression)
+            zip.write(infile, os.path.basename(GDB)+"/"+os.path.basename(infile), zipfile.ZIP_DEFLATED)
+            print ("Zipping: "+infile)
+    #Close Zip file    
+    zip.close()
+    print ("Zipping Complete")
